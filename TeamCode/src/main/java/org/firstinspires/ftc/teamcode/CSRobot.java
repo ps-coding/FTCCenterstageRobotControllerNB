@@ -176,7 +176,6 @@ public class CSRobot {
         if (rootArmPower <= 0) {
             rootArm.setPower(rootArmPower / (
                     Math.max(1, (Math.exp(Math.abs(rootArm.getCurrentPosition() / 35))))
-                    // 120 / ln (100) ~ 25 ----> e ^ (position / 25)
             ));
         } else {
             rootArm.setPower(rootArmPower / 6);
