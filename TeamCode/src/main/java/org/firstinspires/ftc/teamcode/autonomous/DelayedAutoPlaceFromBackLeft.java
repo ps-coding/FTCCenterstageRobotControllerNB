@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.CSRobot;
 
-@Autonomous(name="AutoPlaceFromFrontLeft", group = "PlaceBasic")
-public class AutoPlaceFromFrontLeft extends LinearOpMode {
+@Autonomous(name="DelayedAutoPlaceFromBackLeft", group = "PlaceDelayed")
+public class DelayedAutoPlaceFromBackLeft extends LinearOpMode {
     CSRobot robot = new CSRobot();
 
     @Override
@@ -17,6 +17,8 @@ public class AutoPlaceFromFrontLeft extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
+
+        try {Thread.sleep(12000);} catch (InterruptedException e) {}
 
         robot.boxDoor.setPosition(1.0);
         robot.mainArm.setPosition(0.4);
@@ -28,7 +30,7 @@ public class AutoPlaceFromFrontLeft extends LinearOpMode {
 
         robot.tinyStrafe(1);
 
-        robot.driveToInches(16);
+        robot.driveToInches(68);
         robot.tinyStrafe(6);
 
         robot.mainArm.setPosition(0.8);

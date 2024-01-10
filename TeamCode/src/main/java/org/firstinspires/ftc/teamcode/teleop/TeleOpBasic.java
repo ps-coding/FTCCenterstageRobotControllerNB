@@ -21,14 +21,27 @@ public class TeleOpBasic extends OpMode {
     @Override
     public void loop() {
         robot.gamePadPower(gamepad1, gamepad2);
+
         telemetry.addData("frPower: ", robot.frDrivePower + "\n");
         telemetry.addData("flPower: ", robot.flDrivePower + "\n");
         telemetry.addData("brPower: ", robot.brDrivePower + "\n");
         telemetry.addData("blPower: ", robot.blDrivePower + "\n");
-        telemetry.addData("rootArmPower: ", robot.rootArmPower + "\n");
-        telemetry.addData("secondaryArmPosition: ", robot.secondaryArm.getPosition() + "\n");
-        telemetry.addData("clawPosition: ", robot.claw.getPosition() + "\n");
+
         telemetry.addData("angle: ", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+        telemetry.addData("extensionArmPower: ", robot.extensionArmPower + "\n");
+        telemetry.addData("extensionArm: ", robot.extensionArm.getCurrentPosition());
+
+        telemetry.addData("mainArm: ", robot.mainArm.getPosition() + "\n");
+
+        telemetry.addData("boxDoor: ", robot.boxDoor.getPosition() + "\n");
+
+        telemetry.addData("flyFlew: ", robot.flyFlew);
+
+        telemetry.addData("rollWheel: ", robot.rollWheel.getCurrentPosition());
+
+        telemetry.addData("hangRoller: ", robot.hangRoller.getCurrentPosition());
+
         telemetry.update();
     }
 }
