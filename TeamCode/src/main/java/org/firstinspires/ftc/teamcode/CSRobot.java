@@ -34,7 +34,7 @@ public class CSRobot {
     public Servo flyShoot;
     public boolean flyFlew = false;
 
-    public DcMotor hangRoller;
+//    public DcMotor hangRoller;
 
     public IMU imu;
 
@@ -55,7 +55,7 @@ public class CSRobot {
 
         extensionArm = hardwareMap.get(DcMotor.class, "extensionArm");
         mainArm = hardwareMap.get(Servo.class, "mainArm");
-        boxDoor = hardwareMap.get(Servo.class, "boxDoor");
+//        boxDoor = hardwareMap.get(Servo.class, "boxDoor");
         rollWheel = hardwareMap.get(DcMotor.class, "rollWheel");
         flyShoot = hardwareMap.get(Servo.class, "flyShoot");
 
@@ -77,7 +77,7 @@ public class CSRobot {
 
         // Set up main servo motors
         mainArm.setPosition(0.0);
-        boxDoor.setPosition(0.0);
+//        boxDoor.setPosition(0.0);
 
         // Set up roll wheel motor
         rollWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -89,8 +89,8 @@ public class CSRobot {
         flyShoot.setPosition(1.0);
 
         // Hang roller motor
-        hangRoller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hangRoller.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        hangRoller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        hangRoller.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Set up the IMU (gyro/angle sensor)
         IMU.Parameters imuParameters = new IMU.Parameters(
@@ -148,7 +148,7 @@ public class CSRobot {
             mainArmUp = !mainArmUp;
 
             if (mainArmUp) {
-                mainArm.setPosition(1.0);
+                mainArm.setPosition(0.5);
             } else {
                 mainArm.setPosition(0.0);
             }
@@ -183,7 +183,7 @@ public class CSRobot {
 
     public void hang(Gamepad gp2) {
         double power = gp2.left_trigger - gp2.right_trigger;
-        extensionArm.setPower(power);
+//        hangRoller.setPower(power);
     }
 
     public void turnLeft(double target) {

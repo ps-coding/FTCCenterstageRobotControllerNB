@@ -34,13 +34,13 @@ public class TeleOpBasic extends OpMode {
 
         telemetry.addData("mainArm: ", robot.mainArm.getPosition() + "\n");
 
-        telemetry.addData("boxDoor: ", robot.boxDoor.getPosition() + "\n");
+//        telemetry.addData("boxDoor: ", robot.boxDoor.getPosition() + "\n");
 
         telemetry.addData("flyFlew: ", robot.flyFlew);
 
         telemetry.addData("rollWheel: ", robot.rollWheel.getCurrentPosition());
 
-        telemetry.addData("hangRoller: ", robot.hangRoller.getCurrentPosition());
+//        telemetry.addData("hangRoller: ", robot.hangRoller.getCurrentPosition());
 
         telemetry.update();
     }
