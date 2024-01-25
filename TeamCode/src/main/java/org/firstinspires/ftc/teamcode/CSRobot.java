@@ -34,7 +34,7 @@ public class CSRobot {
     public Servo flyShoot;
     public boolean flyFlew = false;
 
-//    public DcMotor hangRoller;
+    public DcMotor hangRoller;
 
     public IMU imu;
 
@@ -55,9 +55,10 @@ public class CSRobot {
 
         extensionArm = hardwareMap.get(DcMotor.class, "extensionArm");
         mainArm = hardwareMap.get(Servo.class, "mainArm");
-//        boxDoor = hardwareMap.get(Servo.class, "boxDoor");
+        boxDoor = hardwareMap.get(Servo.class, "boxDoor");
         rollWheel = hardwareMap.get(DcMotor.class, "rollWheel");
         flyShoot = hardwareMap.get(Servo.class, "flyShoot");
+        hangRoller = hardwareMap.get(DcMotor.class, "hangRoller");
 
         // Set up drive motors
         frDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -77,7 +78,7 @@ public class CSRobot {
 
         // Set up main servo motors
         mainArm.setPosition(0.0);
-//        boxDoor.setPosition(0.0);
+        boxDoor.setPosition(0.3);
 
         // Set up roll wheel motor
         rollWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -89,8 +90,10 @@ public class CSRobot {
         flyShoot.setPosition(1.0);
 
         // Hang roller motor
-//        hangRoller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        hangRoller.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hangRoller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hangRoller.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        hangRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set up the IMU (gyro/angle sensor)
         IMU.Parameters imuParameters = new IMU.Parameters(
@@ -120,8 +123,8 @@ public class CSRobot {
         multiplier = Math.max(0.3, 1 - gp1.right_trigger);
 
         final double drive = (-gp1.left_stick_y);
-        final double strafe = (gp1.left_stick_x);
-        final double turn = (gp1.right_stick_x);
+        final double turn = (gp1.left_stick_x);
+        final double strafe = (gp1.right_stick_x);
 
         flDrivePower = (drive + strafe + turn);
         frDrivePower = (drive - strafe - turn);
@@ -164,7 +167,7 @@ public class CSRobot {
             if (doorOpen) {
                 boxDoor.setPosition(1.0);
             } else {
-                boxDoor.setPosition(0.0);
+                boxDoor.setPosition(0.3);
             }
         }
     }
@@ -183,7 +186,7 @@ public class CSRobot {
 
     public void hang(Gamepad gp2) {
         double power = gp2.left_trigger - gp2.right_trigger;
-//        hangRoller.setPower(power);
+        hangRoller.setPower(power);
     }
 
     public void turnLeft(double target) {
@@ -241,7 +244,7 @@ public class CSRobot {
             double proportional = error * kp;
 
             double turn = proportional / (180 * kp);
-
+// big black bedbreaking bombaclad boy breaker  Bolli
             flDrivePower = turn;
             frDrivePower = -turn;
             blDrivePower = turn;
