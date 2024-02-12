@@ -13,12 +13,11 @@ public class AutoParkFromFrontRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized.");
         telemetry.update();
+
         robot.init(hardwareMap);
+        robot.boxDoor.setPosition(1.0);
 
         waitForStart();
-
-        robot.boxDoor.setPosition(1.0);
-        robot.mainArm.setPosition(0.4);
 
         telemetry.addData("Status", "Driving...");
         telemetry.update();
@@ -26,12 +25,5 @@ public class AutoParkFromFrontRight extends LinearOpMode {
         robot.tinyStrafe(-1);
 
         robot.driveToInches(46);
-
-        robot.mainArm.setPosition(0.0);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -61,22 +61,22 @@ class Detector extends OpenCvPipeline {
         double middlePct = Core.sumElems(middleMat).val[0] / middle.area() / 255;
         double rightPct = Core.sumElems(rightMat).val[0] / right.area() / 255;
 
-        telemetry.addData("LEFT: ", leftPct * 100);
-        telemetry.addData("MIDDLE: ", middlePct * 100);
-        telemetry.addData("RIGHT: ", rightPct * 100);
-        telemetry.update();
-
         if (leftPct > middlePct && leftPct > rightPct) {
             region = RegionDetected.LEFT;
+            Imgproc.rectangle(input, left, LOW_BLUE, 3);
+            Imgproc.rectangle(input, middle, RED, 3);
+            Imgproc.rectangle(input, right, RED, 3);
         } else if (middlePct > rightPct) {
             region = RegionDetected.MIDDLE;
+            Imgproc.rectangle(input, left, RED, 3);
+            Imgproc.rectangle(input, middle, LOW_BLUE, 3);
+            Imgproc.rectangle(input, right, RED, 3);
         } else {
             region = RegionDetected.RIGHT;
+            Imgproc.rectangle(input, left, RED, 3);
+            Imgproc.rectangle(input, middle, RED, 3);
+            Imgproc.rectangle(input, right, LOW_BLUE, 3);
         }
-
-        Imgproc.rectangle(input, left, RED, 3);
-        Imgproc.rectangle(input, middle, RED, 3);
-        Imgproc.rectangle(input, right, RED, 3);
 
         leftMat.release();
         middleMat.release();

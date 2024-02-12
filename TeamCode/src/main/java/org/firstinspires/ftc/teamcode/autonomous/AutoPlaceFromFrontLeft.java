@@ -12,49 +12,26 @@ public class AutoPlaceFromFrontLeft extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.addData("Status", "Initialized.");
-        telemetry.update();
         robot.init(hardwareMap);
-
-        waitForStart();
-
         robot.boxDoor.setPosition(1.0);
-        robot.mainArm.setPosition(0.4);
-
-        Thread.sleep(2000);
-
-        telemetry.addData("Status", "Driving...");
-        telemetry.update();
+        waitForStart();
 
         robot.tinyStrafe(1);
 
         robot.driveToInches(16);
-        robot.tinyStrafe(6);
+        robot.tinyStrafe(7);
 
-        robot.mainArm.setPosition(0.8);
+        robot.mainArm.setPosition(0.45);
+
+        robot.driveToInches(21);
+
+        robot.boxDoor.setPosition(0.3);
 
         ElapsedTime wait = new ElapsedTime();
-        while (wait.milliseconds() < 1100) {
-            robot.extensionArm.setPower(-0.6 / (Math.max(1, (Math.exp(Math.abs(robot.extensionArm.getCurrentPosition() / 13))))));
+        while (wait.milliseconds() <= 1000) {
+            Thread.yield();
         }
-        robot.extensionArm.setPower(0.0);
 
-        robot.driveToInches(15);
-        try {Thread.sleep(1000);} catch (InterruptedException e) {}
-        robot.boxDoor.setPosition(0.0);
-        try {Thread.sleep(2000);} catch (InterruptedException e) {}
-        robot.mainArm.setPosition(0.0);
-        try {
-            Thread.sleep(900);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        robot.extensionArm.setPower(-0.1);
-        try {
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        robot.extensionArm.setPower(0.0);
+        robot.driveToInches(-5);
     }
 }

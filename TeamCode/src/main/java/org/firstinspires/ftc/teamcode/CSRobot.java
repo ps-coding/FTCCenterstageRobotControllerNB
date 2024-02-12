@@ -26,7 +26,7 @@ public class CSRobot {
 
 
     public Servo boxDoor;
-    private boolean doorOpen = false;
+    private boolean doorOpen = true;
     private ElapsedTime doorDebounce = new ElapsedTime();
 
     public DcMotor rollWheel;
@@ -98,7 +98,7 @@ public class CSRobot {
         // Set up the IMU (gyro/angle sensor)
         IMU.Parameters imuParameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                        RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                         RevHubOrientationOnRobot.UsbFacingDirection.LEFT
                 )
         );
@@ -123,8 +123,8 @@ public class CSRobot {
         multiplier = Math.max(0.3, 1 - gp1.right_trigger);
 
         final double drive = (-gp1.left_stick_y);
-        final double turn = (gp1.left_stick_x);
-        final double strafe = (gp1.right_stick_x);
+        final double turn = (gp1.right_stick_x);
+        final double strafe = (gp1.left_stick_x);
 
         flDrivePower = (drive + strafe + turn);
         frDrivePower = (drive - strafe - turn);
@@ -165,15 +165,19 @@ public class CSRobot {
             doorOpen = !doorOpen;
 
             if (doorOpen) {
-                boxDoor.setPosition(1.0);
-            } else {
                 boxDoor.setPosition(0.3);
+            } else {
+                boxDoor.setPosition(1.0);
             }
         }
     }
 
     public void rollControl(Gamepad gp2) {
-        rollWheel.setPower(gp2.right_stick_y);
+        if (Math.abs(gp2.right_stick_y) > 0.5) {
+            rollWheel.setPower(1.0);
+        } else {
+            rollWheel.setPower(0.0);
+        }
     }
 
     public void fly(Gamepad gp2) {
@@ -189,7 +193,7 @@ public class CSRobot {
         hangRoller.setPower(power);
     }
 
-    public void turnLeft(double target) {
+    public void turn(double target) {
         this.imu.resetYaw();
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -202,6 +206,8 @@ public class CSRobot {
 
         final int DELAY = 50;
 
+        double avg = 0;
+
         while (Math.abs(error) > 1) {
             currentPosition = this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             error = target - currentPosition;
@@ -210,10 +216,12 @@ public class CSRobot {
 
             double turn = proportional / (180 * kp);
 
-            flDrivePower = -turn;
-            frDrivePower = turn;
-            blDrivePower = -turn;
-            brDrivePower = turn;
+            flDrivePower = -turn * (Math.abs(flDrive.getCurrentPosition()) / avg);
+            frDrivePower = turn * (Math.abs(frDrive.getCurrentPosition()) / avg);
+            blDrivePower = -turn * (Math.abs(blDrive.getCurrentPosition()) / avg);
+            brDrivePower = turn * (Math.abs(brDrive.getCurrentPosition()) / avg);
+
+            avg = (double)(Math.abs(flDrive.getCurrentPosition()) + Math.abs(frDrive.getCurrentPosition()) + Math.abs(blDrive.getCurrentPosition()) + Math.abs(brDrive.getCurrentPosition())) / 4;
 
             flDrive.setPower(flDrivePower / 5);
             frDrive.setPower(frDrivePower / 5);
@@ -222,46 +230,6 @@ public class CSRobot {
 
             try {Thread.sleep(DELAY);} catch (InterruptedException e) {}
         }
-    }
-
-    public void turnRight(double target) {
-        this.imu.resetYaw();
-
-        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        double currentPosition = -this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        double error = target - currentPosition;
-
-        double kp = 0.5;
-
-        final int DELAY = 50;
-
-        while (Math.abs(error) > 1) {
-            currentPosition = -this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            error = target - currentPosition;
-
-            double proportional = error * kp;
-
-            double turn = proportional / (180 * kp);
-// big black bedbreaking bombaclad boy breaker  Bolli
-            flDrivePower = turn;
-            frDrivePower = -turn;
-            blDrivePower = turn;
-            brDrivePower = -turn;
-
-            flDrive.setPower(flDrivePower / 5);
-            frDrive.setPower(frDrivePower / 5);
-            blDrive.setPower(blDrivePower / 5);
-            brDrive.setPower(brDrivePower / 5);
-
-            try {Thread.sleep(DELAY);} catch (InterruptedException e) {}
-        }
-
-        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        try {Thread.sleep(500);} catch (InterruptedException e) {}
     }
 
     public void driveToInches(final double inches) {
@@ -274,7 +242,7 @@ public class CSRobot {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (Math.abs(pos - flDrive.getCurrentPosition()) > 50) {
+        while (Math.abs(pos - flDrive.getCurrentPosition()) > 10 || Math.abs(pos - frDrive.getCurrentPosition()) > 10) {
             int flDistance = pos - flDrive.getCurrentPosition();
             int frDistance = pos - frDrive.getCurrentPosition();
             int blDistance = pos - blDrive.getCurrentPosition();
@@ -312,7 +280,7 @@ public class CSRobot {
         int flBrPos = pos;
         int frBlPos = -pos;
 
-        while (Math.abs(flBrPos - brDrive.getCurrentPosition()) > 10) {
+        while (Math.abs(flBrPos - brDrive.getCurrentPosition()) > 10 || Math.abs(flBrPos - flDrive.getCurrentPosition()) > 10) {
             int flDistance = flBrPos - flDrive.getCurrentPosition();
             int frDistance = frBlPos - frDrive.getCurrentPosition();
             int blDistance = frBlPos - blDrive.getCurrentPosition();
