@@ -206,9 +206,7 @@ public class CSRobot {
 
         final int DELAY = 50;
 
-        double avg = 0;
-
-        while (Math.abs(error) > 1) {
+        while (Math.abs(error) > 2) {
             currentPosition = this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             error = target - currentPosition;
 
@@ -216,20 +214,25 @@ public class CSRobot {
 
             double turn = proportional / (180 * kp);
 
-            flDrivePower = -turn * (Math.abs(flDrive.getCurrentPosition()) / avg);
-            frDrivePower = turn * (Math.abs(frDrive.getCurrentPosition()) / avg);
-            blDrivePower = -turn * (Math.abs(blDrive.getCurrentPosition()) / avg);
-            brDrivePower = turn * (Math.abs(brDrive.getCurrentPosition()) / avg);
+            flDrivePower = -turn;
+            frDrivePower = turn;
+            blDrivePower = -turn;
+            brDrivePower = turn;
 
-            avg = (double)(Math.abs(flDrive.getCurrentPosition()) + Math.abs(frDrive.getCurrentPosition()) + Math.abs(blDrive.getCurrentPosition()) + Math.abs(brDrive.getCurrentPosition())) / 4;
-
-            flDrive.setPower(flDrivePower / 5);
-            frDrive.setPower(frDrivePower / 5);
-            blDrive.setPower(blDrivePower / 5);
-            brDrive.setPower(brDrivePower / 5);
+            flDrive.setPower(flDrivePower / 3);
+            frDrive.setPower(frDrivePower / 3);
+            blDrive.setPower(blDrivePower / 3);
+            brDrive.setPower(brDrivePower / 3);
 
             try {Thread.sleep(DELAY);} catch (InterruptedException e) {}
         }
+
+        drive(0.0);
+
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        try {Thread.sleep(500);} catch (InterruptedException e) {}
     }
 
     public void driveToInches(final double inches) {
@@ -253,12 +256,10 @@ public class CSRobot {
             frDrivePower = (double)frDistance / (double)Math.abs(pos);
             brDrivePower = (double)brDistance / (double)Math.abs(pos);
 
-            flDrive.setPower(flDrivePower / 5);
-            frDrive.setPower(frDrivePower / 5);
-            blDrive.setPower(blDrivePower / 5);
-            brDrive.setPower(brDrivePower / 5);
-
-            Thread.yield();
+            flDrive.setPower(flDrivePower / 3);
+            frDrive.setPower(frDrivePower / 3);
+            blDrive.setPower(blDrivePower / 3);
+            brDrive.setPower(brDrivePower / 3);
         }
 
         drive(0.0);
@@ -295,8 +296,6 @@ public class CSRobot {
             frDrive.setPower(frDrivePower / 5);
             blDrive.setPower(blDrivePower / 5);
             brDrive.setPower(brDrivePower / 5);
-
-            Thread.yield();
         }
 
         drive(0.0);
