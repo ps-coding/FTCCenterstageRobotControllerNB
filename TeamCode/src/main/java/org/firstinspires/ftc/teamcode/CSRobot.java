@@ -115,7 +115,7 @@ public class CSRobot {
         mainArmToggle(gp2);
         boxDoorToggle(gp2);
         rollControl(gp2);
-        fly(gp2);
+        fly(gp1);
         hang(gp2);
     }
 
@@ -153,6 +153,8 @@ public class CSRobot {
             if (mainArmUp) {
                 mainArm.setPosition(0.5);
             } else {
+                doorOpen = true;
+                boxDoor.setPosition(0.3);
                 mainArm.setPosition(0.0);
             }
         }
@@ -165,7 +167,10 @@ public class CSRobot {
             doorOpen = !doorOpen;
 
             if (doorOpen) {
-                boxDoor.setPosition(0.3);
+                if (mainArmUp)
+                    boxDoor.setPosition(0.1);
+                else
+                    boxDoor.setPosition(0.3);
             } else {
                 boxDoor.setPosition(1.0);
             }
@@ -173,15 +178,17 @@ public class CSRobot {
     }
 
     public void rollControl(Gamepad gp2) {
-        if (Math.abs(gp2.right_stick_y) > 0.5) {
+        if (Math.abs(gp2.right_stick_y) > 0.6) {
             rollWheel.setPower(1.0);
+        } else if (Math.abs(gp2.right_stick_y) > 0.1) {
+            rollWheel.setPower(0.5);
         } else {
             rollWheel.setPower(0.0);
         }
     }
 
-    public void fly(Gamepad gp2) {
-        if (gp2.y && !flyFlew) {
+    public void fly(Gamepad gp1) {
+        if (gp1.y && !flyFlew) {
             flyFlew = true;
 
             flyShoot.setPosition(0.0);
