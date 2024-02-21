@@ -203,6 +203,8 @@ public class CSRobot {
     public void turn(double target) {
         this.imu.resetYaw();
 
+        if (target == 0) return;
+
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -249,8 +251,12 @@ public class CSRobot {
     public void driveTo(final int pos) {
         if (pos == 0) return;
 
+        this.imu.resetYaw();
+
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        final int delay = 20;
 
         while (Math.abs(pos - flDrive.getCurrentPosition()) > 10 || Math.abs(pos - frDrive.getCurrentPosition()) > 10) {
             int flDistance = pos - flDrive.getCurrentPosition();
@@ -267,6 +273,41 @@ public class CSRobot {
             frDrive.setPower(frDrivePower / 3);
             blDrive.setPower(blDrivePower / 3);
             brDrive.setPower(brDrivePower / 3);
+
+            try { Thread.sleep(delay); } catch (InterruptedException e) {}
+        }
+
+        drive(0.0);
+
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double currentPosition = this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double error = 0 - currentPosition;
+
+        double kp = 0.5;
+
+        final int DELAY = 50;
+
+        while (Math.abs(error) > 2) {
+            currentPosition = this.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            error = 0 - currentPosition;
+
+            double proportional = error * kp;
+
+            double turn = proportional / (180 * kp);
+
+            flDrivePower = -turn;
+            frDrivePower = turn;
+            blDrivePower = -turn;
+            brDrivePower = turn;
+
+            flDrive.setPower(flDrivePower / 3);
+            frDrive.setPower(frDrivePower / 3);
+            blDrive.setPower(blDrivePower / 3);
+            brDrive.setPower(brDrivePower / 3);
+
+            try {Thread.sleep(DELAY);} catch (InterruptedException e) {}
         }
 
         drive(0.0);

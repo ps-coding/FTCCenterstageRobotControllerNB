@@ -50,6 +50,9 @@ public class DetectorAutoPlaceFromBackLeft extends LinearOpMode {
             }
 
             telemetry.addData("Region: ", regionDetected.toString());
+            telemetry.addData("Left: ", detector.leftPct);
+            telemetry.addData("Middle: ", detector.rightPct);
+            telemetry.addData("Presence: ", detector.leftPct + detector.rightPct);
             telemetry.update();
         }
 
@@ -103,7 +106,7 @@ public class DetectorAutoPlaceFromBackLeft extends LinearOpMode {
 
         robot.mainArm.setPosition(0.4);
 
-        robot.driveToInches(13);
+        robot.driveToInches(11);
 
         robot.boxDoor.setPosition(0.3);
 
@@ -112,7 +115,7 @@ public class DetectorAutoPlaceFromBackLeft extends LinearOpMode {
             Thread.yield();
         }
 
-        robot.driveToInches(-5);
+        robot.driveToInches(-3);
 
         robot.mainArm.setPosition(0.0);
         ElapsedTime endGame = new ElapsedTime();
